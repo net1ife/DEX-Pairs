@@ -1,5 +1,3 @@
-Certainly! Here's the revised README file with the updated file name:
-
 # Token Pairs with Highest Liquidity
 
 This is a simple Streamlit app that retrieves and displays token pairs with the highest liquidity from Uniswap or Sushiswap exchanges. It uses the subgraph APIs provided by Uniswap and Sushiswap to fetch the data.
