@@ -1,3 +1,4 @@
+import streamlit as st
 import requests
 
 
@@ -35,14 +36,6 @@ def get_token_pairs_with_highest_liquidity(exchange_name, num_pairs):
         return []
 
 
-# Example usage
-num_pairs = 10  # Number of token pairs to retrieve
-
-uniswap_pairs = get_token_pairs_with_highest_liquidity('uniswap', num_pairs)
-sushiswap_pairs = get_token_pairs_with_highest_liquidity(
-    'sushiswap', num_pairs)
-
-
 def format_pair(pair):
     token0_symbol = pair['token0']['symbol']
     token0_address = pair['token0']['id']
@@ -52,18 +45,23 @@ def format_pair(pair):
     return f"Pair: {token0_symbol}/{token1_symbol}, Address: {token0_address}/{token1_address}, Liquidity: ${reserve_usd}"
 
 
-if uniswap_pairs:
-    print("Uniswap token pairs with highest liquidity:")
-    for pair in uniswap_pairs:
-        print(format_pair(pair))
-else:
-    print("No Uniswap token pairs found.")
+# Streamlit UI
+st.title('Token Pairs with Highest Liquidity')
 
-print()
+exchange_name = st.sidebar.selectbox('Select Exchange', ['Uniswap', 'Sushiswap'])
+num_pairs = st.sidebar.number_input('Number of Pairs', min_value=1, max_value=20, value=10)
 
-if sushiswap_pairs:
-    print("Sushiswap token pairs with highest liquidity:")
-    for pair in sushiswap_pairs:
-        print(format_pair(pair))
-else:
-    print("No Sushiswap token pairs found.")
+if st.sidebar.button('Get Pairs'):
+    if exchange_name.lower() == 'uniswap':
+        pairs = get_token_pairs_with_highest_liquidity('uniswap', num_pairs)
+    elif exchange_name.lower() == 'sushiswap':
+        pairs = get_token_pairs_with_highest_liquidity('sushiswap', num_pairs)
+    else:
+        st.error('Invalid exchange name.')
+
+    if pairs:
+        st.subheader(f'{exchange_name} token pairs with highest liquidity:')
+        for pair in pairs:
+            st.write(format_pair(pair))
+    else:
+        st.warning('No token pairs found.')
